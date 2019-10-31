@@ -1,3 +1,4 @@
+using System;
 using AspNetCore.SecurityHeaders.Configuration.SecurityHeaders;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -20,13 +21,21 @@ namespace AspNetCore.SecurityHeaders
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.Configure<CookiePolicyOptions>(options =>
-			{
-				// This lambda determines whether user consent for non-essential cookies is needed for a given request.
-				options.CheckConsentNeeded = context => true;
-				options.MinimumSameSitePolicy = SameSiteMode.None;
-			});
+			// services.Configure<CookiePolicyOptions>(options =>
+			// {
+			// 	// This lambda determines whether user consent for non-essential cookies is needed for a given request.
+			// 	options.CheckConsentNeeded = context => true;
+			// 	options.MinimumSameSitePolicy = SameSiteMode.None;
+			// });
 
+			services.AddHsts(options =>
+			{
+				// options.Preload = true;
+				options.IncludeSubDomains = true;
+				options.MaxAge = TimeSpan.FromDays(365);
+				// options.ExcludedHosts.Add("example.com");
+				// options.ExcludedHosts.Add("www.example.com");
+			});
 
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 		}
@@ -49,7 +58,7 @@ namespace AspNetCore.SecurityHeaders
 
 			app.UseHttpsRedirection();
 			app.UseStaticFiles();
-			app.UseCookiePolicy();
+			//app.UseCookiePolicy();
 
 			app.UseMvc();
 		}
